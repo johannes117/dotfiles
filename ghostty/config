@@ -8,7 +8,7 @@ window-padding-y = 10
 window-decoration = true
 
 # Theme
-theme = GruvboxDark
+theme = Gruvbox Dark
 
 # Cursor
 cursor-style = block
