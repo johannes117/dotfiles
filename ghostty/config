@@ -19,3 +19,6 @@ shell-integration = zsh
 
 # Clipboard
 copy-on-select = true
+
+# Keybinds
+keybind = shift+enter=text:\x1b\n
