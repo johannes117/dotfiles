@@ -1,0 +1,21 @@
+# Font
+font-family = JetBrains Mono
+font-size = 14
+
+# Window
+window-padding-x = 10
+window-padding-y = 10
+window-decoration = true
+
+# Theme
+theme = GruvboxDark
+
+# Cursor
+cursor-style = block
+cursor-style-blink = false
+
+# Shell integration
+shell-integration = zsh
+
+# Clipboard
+copy-on-select = true
