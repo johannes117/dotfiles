@@ -3,7 +3,7 @@
 # =============================================================================
 # CONFIGURATION - Update these values for your machine
 # =============================================================================
-WORKTREE_BASE_DIR="/Users/bracesproul/code/lang-chain-ai/wt"
+WORKTREE_BASE_DIR="/Users/johannes/Documents/Dev/wt"
 INSTALL_COMMAND="uv sync && uv run poe install-deps"
 # =============================================================================
 
