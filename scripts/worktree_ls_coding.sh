@@ -10,14 +10,13 @@ INSTALL_COMMAND="uv sync && uv run poe install-deps"
 # Exit if no branch name supplied
 if [ -z "$1" ]; then
   echo "Error: No branch name supplied."
-  echo "Usage: wtc <branch_name> --prompt \"<prompt>\""
+  echo "Usage: wtc <branch_name> [--yolo] [--codex]"
   return 1
 fi
 
 # Variables
 BRANCH_NAME=$1
 WORKTREE_DIR="$WORKTREE_BASE_DIR/$BRANCH_NAME"
-PROMPT=""
 YOLO=false
 USE_CODEX=false
 
@@ -25,10 +24,6 @@ USE_CODEX=false
 shift # Remove branch name from arguments
 while [[ $# -gt 0 ]]; do
   case $1 in
-    --prompt)
-      PROMPT="$2"
-      shift 2
-      ;;
     --yolo)
       YOLO=true
       shift
@@ -43,13 +38,6 @@ while [[ $# -gt 0 ]]; do
       ;;
   esac
 done
-
-# Check if prompt was provided
-if [ -z "$PROMPT" ]; then
-  echo "Error: --prompt argument is required."
-  echo "Usage: wtc <branch_name> --prompt \"<prompt>\""
-  return 1
-fi
 
 # Create git worktree (and branch if it doesn't exist)
 if git show-ref --verify --quiet refs/heads/$BRANCH_NAME; then
@@ -126,19 +114,19 @@ fi
 
 echo "Install command completed successfully."
 
-# Run AI assistant with the provided prompt
+# Run AI assistant
 if [ "$USE_CODEX" = true ]; then
-  echo "Starting codex with prompt..."
+  echo "Starting codex..."
   if [ "$YOLO" = true ]; then
-    codex --full-auto "$PROMPT"
+    codex --full-auto
   else
-    codex "$PROMPT"
+    codex
   fi
 else
-  echo "Starting claude with prompt..."
+  echo "Starting claude..."
   if [ "$YOLO" = true ]; then
-    claude --dangerously-skip-permissions "$PROMPT"
+    claude --dangerously-skip-permissions
   else
-    claude "$PROMPT"
+    claude
   fi
 fi
