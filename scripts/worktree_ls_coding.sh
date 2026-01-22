@@ -11,7 +11,7 @@ INSTALL_COMMAND="uv sync && uv run poe install-deps"
 if [ -z "$1" ]; then
   echo "Error: No branch name supplied."
   echo "Usage: wtc <branch_name> [--yolo] [--codex]"
-  return 1
+  exit 1
 fi
 
 # Variables
@@ -34,24 +34,29 @@ while [[ $# -gt 0 ]]; do
       ;;
     *)
       echo "Unknown option: $1"
-      return 1
+      exit 1
       ;;
   esac
 done
 
-# Create git worktree (and branch if it doesn't exist)
-if git show-ref --verify --quiet refs/heads/$BRANCH_NAME; then
-  echo "Branch '$BRANCH_NAME' exists. Creating worktree..."
-  git worktree add $WORKTREE_DIR $BRANCH_NAME
+# Check if worktree already exists
+if [ -d "$WORKTREE_DIR" ]; then
+  echo "Worktree already exists at '$WORKTREE_DIR'. Skipping creation..."
 else
-  echo "Creating new branch '$BRANCH_NAME' and worktree..."
-  git worktree add -b $BRANCH_NAME $WORKTREE_DIR
-fi
+  # Create git worktree (and branch if it doesn't exist)
+  if git show-ref --verify --quiet refs/heads/$BRANCH_NAME; then
+    echo "Branch '$BRANCH_NAME' exists. Creating worktree..."
+    git worktree add "$WORKTREE_DIR" "$BRANCH_NAME"
+  else
+    echo "Creating new branch '$BRANCH_NAME' and worktree..."
+    git worktree add -b "$BRANCH_NAME" "$WORKTREE_DIR"
+  fi
 
-# Error handling for git worktree
-if [ $? -ne 0 ]; then
-  echo "Git worktree creation failed."
-  return 1
+  # Error handling for git worktree
+  if [ $? -ne 0 ]; then
+    echo "Git worktree creation failed."
+    exit 1
+  fi
 fi
 
 # Function to copy env files
@@ -87,7 +92,7 @@ if [ -d "$SOURCE_BASE_DIR/secrets" ]; then
   rsync -a "$SOURCE_BASE_DIR/secrets/" "$WORKTREE_DIR/secrets/"
   if [ $? -ne 0 ]; then
     echo "Secrets directory copy failed."
-    return 1
+    exit 1
   fi
   echo "Copied secrets directory successfully."
 fi
@@ -98,7 +103,7 @@ cd $WORKTREE_DIR
 # Error handling for cd command
 if [ $? -ne 0 ]; then
   echo "Failed to change directory."
-  return 1
+  exit 1
 fi
 
 echo "Worktree created successfully."
@@ -109,7 +114,7 @@ eval "$INSTALL_COMMAND"
 
 if [ $? -ne 0 ]; then
   echo "Install command failed."
-  return 1
+  exit 1
 fi
 
 echo "Install command completed successfully."
